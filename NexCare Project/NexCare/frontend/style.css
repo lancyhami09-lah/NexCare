@@ -1,0 +1,1387 @@
+/* ====================================================================
+   NexCare — Universal Minimalist Design System
+   Palette: Warm Cream Background (#FAF8F5), White Cards (#FFFFFF),
+            Sage Green Primary (#4E705B), Slate Text (#1E293B),
+            Muted Red for Emergency SOS (#C53030)
+   Principles: Calm, uncluttered, high-contrast, accessible healthcare UI
+   ==================================================================== */
+
+:root {
+  /* Core Palette */
+  --color-primary: #4E705B;         /* Calm Sage Green */
+  --color-primary-hover: #3D5847;   /* Deeper Sage Green */
+  --color-primary-light: #EEF4F0;   /* Pale Sage Tint */
+
+  --color-background: #FAF8F5;      /* Warm Soothing Cream Background */
+  --color-surface: #FFFFFF;         /* Pure White Surface/Cards */
+  --color-surface-subtle: #F4EFEA;  /* Soft Warm Neutral */
+
+  --color-text-primary: #1E293B;    /* Deep Charcoal/Slate */
+  --color-text-muted: #64748B;      /* Balanced Slate Muted */
+  --color-text-inverse: #FFFFFF;    /* Pure White */
+
+  --color-border: #E8E5DC;          /* Subtle Soft Border */
+  --color-border-strong: #D5D1C6;
+
+  /* SOS Emergency (The Deliberate High-Contrast Danger Exception) */
+  --color-danger: #C53030;          /* Muted Crimson Red */
+  --color-danger-hover: #9B2C2C;
+  --color-danger-bg: #FEF2F2;
+  --color-danger-border: #FECACA;
+
+  /* Status Indicators (Always Text-Paired) */
+  --status-green: #2E7D32;
+  --status-green-bg: #E8F5E9;
+  --status-green-border: #C8E6C9;
+
+  --status-yellow: #B45309;
+  --status-yellow-bg: #FEF3C7;
+  --status-yellow-border: #FDE68A;
+
+  --status-red: #C53030;
+  --status-red-bg: #FEF2F2;
+  --status-red-border: #FECACA;
+
+  --color-success: var(--status-green);
+  --color-success-bg: var(--status-green-bg);
+  --color-success-text: var(--status-green);
+
+  /* Legacy variable aliases for full backwards compatibility */
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-light: var(--color-primary-light);
+  --secondary: #587965;
+  --secondary-hover: #456150;
+  --secondary-light: #EEF4F0;
+  --accent: var(--color-primary);
+  --accent-light: var(--color-primary-light);
+
+  --bg-page: var(--color-background);
+  --bg-surface: var(--color-surface);
+  --bg-subtle: var(--color-surface-subtle);
+  --border-subtle: var(--color-border);
+  --border-strong: var(--color-border-strong);
+
+  --text-main: var(--color-text-primary);
+  --text-muted: var(--color-text-muted);
+  --text-inverse: var(--color-text-inverse);
+
+  /* Minimal Typography Scale (2 weights: 400 regular, 600 semi-bold) */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-size-base: 0.95rem;
+  --line-height-base: 1.5;
+
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Corner Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Subtle Minimalist Shadows (favoring flat borders) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --transition: all 0.15s ease-out;
+}
+
+/* Accessible Large Text Mode */
+body.large-text {
+  --font-size-base: 1.15rem;
+}
+body.large-text h1 { font-size: 2.1rem; }
+body.large-text h2 { font-size: 1.6rem; }
+body.large-text h3 { font-size: 1.3rem; }
+body.large-text .btn, body.large-text input, body.large-text select {
+  font-size: 1.15rem;
+  padding: 0.8rem 1.25rem;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: var(--line-height-base);
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.1rem; }
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* ====================================================================
+   Layout & Containers
+   ==================================================================== */
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.container-narrow {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Header / Navbar */
+.navbar {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 1.25rem;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+}
+.brand-name span {
+  color: var(--color-primary);
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* Announcement Banners */
+.emergency-banner {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  padding: 0.55rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.emergency-banner a {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.demo-banner {
+  background-color: var(--status-yellow-bg);
+  color: var(--status-yellow);
+  border-bottom: 1px solid var(--status-yellow-border);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* ====================================================================
+   Buttons (Minimalist & Flat)
+   ==================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.05rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+.btn-secondary:hover {
+  background-color: var(--color-border);
+  text-decoration: none;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+.btn-outline:hover {
+  background-color: var(--color-surface-subtle);
+  border-color: var(--color-border-strong);
+  text-decoration: none;
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+.btn-danger:hover {
+  background-color: var(--color-danger-hover);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.btn-danger-subtle {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+.btn-danger-subtle:hover {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+
+.btn-success {
+  background-color: var(--status-green);
+  color: #ffffff;
+}
+.btn-success:hover {
+  background-color: #256629;
+  color: #ffffff;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.82rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  padding: 0.75rem 1.4rem;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
+}
+
+.btn-toggle-active {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ====================================================================
+   Status Badges (Clean & Readable)
+   ==================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  text-transform: capitalize;
+  border: 1px solid transparent;
+}
+
+.badge-green {
+  background-color: var(--status-green-bg);
+  color: var(--status-green);
+  border-color: var(--status-green-border);
+}
+
+.badge-yellow {
+  background-color: var(--status-yellow-bg);
+  color: var(--status-yellow);
+  border-color: var(--status-yellow-border);
+}
+
+.badge-red {
+  background-color: var(--status-red-bg);
+  color: var(--status-red);
+  border-color: var(--status-red-border);
+}
+
+.badge-blue {
+  background-color: #EBF3F8;
+  color: #2B6CB0;
+  border-color: #BEE3F8;
+}
+
+.badge-purple {
+  background-color: #F3E8FF;
+  color: #6B21A8;
+  border-color: #E9D5FF;
+}
+
+.badge-neutral {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
+.badge-specialty {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.badge-emergency {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.badge-bed-reserved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: var(--status-green-bg);
+  color: var(--status-green);
+  border: 1px solid var(--status-green-border);
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ====================================================================
+   Cards & Surfaces (Flat with subtle 1px border)
+   ==================================================================== */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+/* Hero Section (Calm Cream/White) */
+.hero-section {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  padding: 2.5rem 1rem;
+  text-align: center;
+}
+.hero-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+.hero-subtitle {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.5;
+}
+
+/* Locality Selector Hero Bar */
+.locality-search-box {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  max-width: 800px;
+  margin: 0 auto;
+  align-items: center;
+}
+.locality-select-wrap {
+  flex: 1 1 220px;
+  text-align: left;
+}
+.locality-select-wrap label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+.locality-select {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.92rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  outline: none;
+}
+.locality-select:focus {
+  border-color: var(--color-primary);
+}
+
+/* Filter Controls Bar */
+.filter-bar {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.filter-input {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.88rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  min-width: 180px;
+  outline: none;
+}
+.filter-input:focus {
+  border-color: var(--color-primary);
+}
+
+/* View Switcher Tabs */
+.view-tabs {
+  display: inline-flex;
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  border: 1px solid var(--color-border);
+}
+.view-tab {
+  padding: 0.45rem 0.85rem;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.view-tab.active {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Hospital Cards Grid */
+.hospitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.hospital-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.15s ease;
+}
+.hospital-card:hover {
+  border-color: var(--color-primary);
+}
+
+.card-header {
+  margin-bottom: 0.75rem;
+}
+.card-locality-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0.15rem 0 0.35rem;
+  color: var(--color-text-primary);
+}
+.card-address {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+/* Progress bar for Beds */
+.bed-stat-wrap {
+  margin: 0.75rem 0;
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.75rem;
+}
+.bed-stat-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.progress-bar-bg {
+  height: 6px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+/* Status Indicators in Card */
+.card-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+}
+
+/* Recommendation Highlight Box */
+.rec-reason-box {
+  background-color: var(--color-primary-light);
+  border-left: 3px solid var(--color-primary);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--color-primary-hover);
+  margin-bottom: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Score Badge */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.card-action-bar {
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ====================================================================
+   Modals (General & SOS)
+   ==================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+
+.modal-backdrop.open,
+#sos-modal.open {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  display: flex !important;
+}
+
+.modal-content {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  max-width: 620px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+.modal-close:hover {
+  color: var(--color-text-primary);
+}
+
+/* Resource Grid in Modal/Staff */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+  margin: 0.85rem 0;
+}
+.resource-item {
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem;
+  text-align: center;
+}
+.resource-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+/* ====================================================================
+   Floating & Sticky Top-Right SOS Emergency Button Components
+   ==================================================================== */
+.btn-sos-nav,
+.btn-sos-floating {
+  background-color: var(--color-danger);
+  color: #ffffff !important;
+  border: 1px solid var(--color-danger-hover);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.95rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 3px rgba(197, 48, 48, 0.25);
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.btn-sos-nav:hover,
+.btn-sos-floating:hover {
+  background-color: var(--color-danger-hover);
+  color: #ffffff !important;
+  text-decoration: none;
+}
+.btn-sos-nav .sos-icon,
+.btn-sos-floating .sos-icon {
+  font-size: 1rem;
+}
+.btn-sos-nav .sos-text,
+.btn-sos-floating .sos-text {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Staff Header Emergency Alert Indicator (Top-Right of Dashboard) */
+.staff-header-top-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.staff-header-emergency-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  background: none;
+  font-family: inherit;
+}
+
+.staff-header-emergency-alert.alert-active {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  border-color: var(--color-danger-hover);
+  box-shadow: 0 2px 8px rgba(197, 48, 48, 0.3);
+  animation: pulse-sos 2s infinite ease-in-out;
+}
+
+.staff-header-emergency-alert.alert-active:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.staff-header-emergency-alert.alert-quiet {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
+.staff-header-emergency-alert.alert-quiet:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.staff-header-emergency-alert .alert-action-arrow {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+@keyframes pulse-sos {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); box-shadow: 0 4px 12px rgba(197, 48, 48, 0.4); }
+  100% { transform: scale(1); }
+}
+
+.sos-modal-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  max-width: 580px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+}
+.sos-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.25rem;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.btn-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+.btn-modal-close:hover {
+  color: var(--color-text-primary);
+}
+
+.sos-alert-box {
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  color: #7f1d1d;
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.simulated-emergency-notice {
+  background-color: var(--color-surface-subtle);
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  line-height: 1.35;
+}
+
+.active-emergency-banner {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.88rem;
+}
+.active-emergency-banner button {
+  background-color: #ffffff;
+  color: var(--color-danger);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* 4-Step Emergency Timeline */
+.emergency-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin: 1.25rem 0;
+  padding: 0 0.5rem;
+}
+.emergency-timeline::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 25px;
+  right: 25px;
+  height: 2px;
+  background-color: var(--color-border);
+  z-index: 1;
+}
+.timeline-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+.timeline-step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.timeline-step-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.timeline-step.completed .timeline-step-icon {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+.timeline-step.completed .timeline-step-label {
+  color: var(--color-primary);
+}
+.timeline-step.current .timeline-step-icon {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+  color: #ffffff;
+}
+.timeline-step.current .timeline-step-label {
+  color: var(--color-danger);
+}
+
+/* Emergency Info Grid */
+.emergency-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 1.15rem;
+}
+.emergency-info-item {
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+.emergency-info-item .info-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.2rem;
+}
+.emergency-info-item .info-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Hotlines inside modal */
+.sos-hotline-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.sos-hotline-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: #ffffff;
+  background-color: var(--color-danger);
+  transition: background-color 0.15s ease;
+}
+.sos-hotline-btn:hover {
+  background-color: var(--color-danger-hover);
+  text-decoration: none;
+}
+.sos-hotline-btn.secondary-hotline {
+  background-color: var(--color-primary);
+}
+.sos-hotline-btn.secondary-hotline:hover {
+  background-color: var(--color-primary-hover);
+}
+.hotline-icon {
+  font-size: 1.4rem;
+}
+.hotline-num {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.hotline-label {
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+.sos-hospital-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.75rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.45rem;
+}
+
+.btn-sos-confirm-action {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  width: 100%;
+}
+.btn-sos-confirm-action:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.btn-sos-cancel-action {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-sos-cancel-action:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+.btn-emergency-cancel-req {
+  background: none;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-emergency-cancel-req:hover {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+
+/* ====================================================================
+   Staff Dashboard Minimalist Elements
+   ==================================================================== */
+.staff-header-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.staff-info-title {
+  color: var(--color-text-primary);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.staff-info-sub {
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.staff-warning-box {
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  color: #7f1d1d;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.staff-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.staff-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.65rem;
+}
+
+/* KPI Cards */
+.staff-kpi-grid .kpi-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.form-control {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  outline: none;
+}
+.form-control:focus {
+  border-color: var(--color-primary);
+}
+.form-control.is-invalid {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+}
+.audit-table,
+.staff-emergency-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+.audit-table th,
+.staff-emergency-table th {
+  background-color: var(--color-surface-subtle);
+  padding: 0.6rem 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+.audit-table td,
+.staff-emergency-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  vertical-align: middle;
+}
+.audit-table tr:hover td,
+.staff-emergency-table tr:hover td {
+  background-color: var(--color-surface-subtle);
+}
+
+/* Voice Assistant Components */
+.btn-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-voice:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.btn-voice.listening {
+  background-color: var(--color-danger-bg) !important;
+  color: var(--color-danger) !important;
+  border-color: var(--color-danger) !important;
+}
+
+.voice-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #1E293B;
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.1rem;
+  box-shadow: var(--shadow-lg);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  max-width: 400px;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.voice-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.voice-toast-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.voice-toast.speaking .voice-toast-icon {
+  background-color: var(--status-green);
+}
+.voice-toast-text {
+  flex: 1;
+  line-height: 1.35;
+}
+.voice-toast-close {
+  background: none;
+  border: none;
+  color: #94A3B8;
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+.voice-toast-close:hover {
+  color: #ffffff;
+}
+
+.btn-speak-card {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-speak-card:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.location-cascade-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.85rem;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 2rem 1rem;
+  margin-top: 3rem;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title { font-size: 1.6rem; }
+  .hospitals-grid { grid-template-columns: 1fr; }
+  .locality-search-box { flex-direction: column; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .staff-header-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .staff-header-top-right {
+    align-items: flex-start;
+  }
+  .staff-header-top-right .staff-logged-meta {
+    text-align: left !important;
+  }
+  .sos-hotline-grid { grid-template-columns: 1fr; }
+
+  .nav-container {
+    height: auto;
+    min-height: 56px;
+    padding: 0.5rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .nav-controls {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .btn-sos-nav,
+  .btn-sos-floating {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.82rem;
+  }
+}

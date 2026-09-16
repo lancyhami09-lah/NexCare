@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexCare — Hospital Staff Portal</title>
+  <meta name="description" content="Hospital staff dashboard for updating live simulated bed availability, crowd metrics, doctor status, and medical resources.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Emergency Banner (Mandatory) -->
+  <div class="emergency-banner" role="alert">
+    <span>⚠️ Emergency Services: Dial <strong>108 / 112</strong> for immediate medical transport. NexCare is not an ambulance or dispatch service.</span>
+  </div>
+
+  <!-- Simulated Data Disclaimer (Mandatory) -->
+  <div class="demo-banner">
+    <span>ℹ️ All hospital and availability information shown here is simulated demo data for prototype purposes.</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" aria-label="Staff Navigation">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo" aria-label="NexCare Home">
+        <div class="brand-icon">✚</div>
+        <div class="brand-name">Nex<span>Care</span> <small style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 0.25rem;">Staff Portal</small></div>
+      </a>
+
+      <div class="nav-controls">
+        <button id="nav-staff-emergency-indicator" class="btn btn-sos-nav btn-sm" style="display: none;" title="Active emergency requests. Click to view queue.">
+          <span>🚨</span> <span id="nav-staff-emergency-count">0 Active</span>
+        </button>
+        <button id="toggle-text-size" class="btn btn-outline btn-sm">🔤 A+ Large Text</button>
+        <a href="patient.html" class="btn btn-outline btn-sm">Patient Portal</a>
+        <button id="btn-staff-logout" class="btn btn-secondary btn-sm" style="display: none;">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+
+    <!-- ==========================================================
+         VIEW 1: STAFF LOGIN SCREEN (Gated)
+         ========================================================== -->
+    <div id="staff-login-section" class="container-narrow">
+      <div class="card" style="box-shadow: var(--shadow-lg); border-top: 4px solid var(--primary);">
+        <div style="text-align: center; margin-bottom: 1.75rem;">
+          <div style="width: 50px; height: 50px; background-color: var(--primary-light); color: var(--primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 0.75rem;">
+            🔒
+          </div>
+          <h1 style="font-size: 1.8rem; margin-bottom: 0.35rem;">Hospital Staff Login</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Enter your facility credentials to manage live availability figures.</p>
+          <div class="badge badge-yellow" style="margin-top: 0.5rem; padding: 0.35rem 0.85rem;">
+            ⚠️ Demo credentials only — not production-grade authentication
+          </div>
+        </div>
+
+        <!-- Login Feedback Message -->
+        <div id="login-error-msg" class="staff-warning-box" style="display: none;"></div>
+
+        <form id="staff-login-form">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="input-staff-id">Staff ID / Account ID</label>
+            <input type="text" id="input-staff-id" class="form-control" placeholder="e.g. staff_fortis" required autocomplete="username">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="input-staff-password">Password</label>
+            <input type="password" id="input-staff-password" class="form-control" placeholder="Enter demo password" required autocomplete="current-password">
+          </div>
+
+          <button type="submit" id="btn-submit-login" class="btn btn-primary btn-lg" style="width: 100%;">
+            Sign In to Staff Dashboard
+          </button>
+        </form>
+
+        <!-- Quick Demo Credentials Helper -->
+        <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle);">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.6rem;">
+            Quick Demo Accounts (Password for all is: <code>demo123</code>):
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            <button type="button" class="btn btn-outline btn-sm demo-chip" data-user="staff_fortis">Fortis Malar Chennai (staff_fortis)</button>
+            <button type="button" class="btn btn-outline btn-sm demo-chip" data-user="staff_apollo">Apollo Chennai (staff_apollo)</button>
+            <button type="button" class="btn btn-outline btn-sm demo-chip" data-user="staff_rggh">RGGGH Govt Chennai (staff_rggh)</button>
+            <button type="button" class="btn btn-outline btn-sm demo-chip" data-user="staff_manipal">Manipal Bengaluru (staff_manipal)</button>
+            <button type="button" class="btn btn-outline btn-sm demo-chip" data-user="staff_narayana">Narayana Bengaluru (staff_narayana)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         VIEW 2: AUTHENTICATED STAFF DASHBOARD
+         ========================================================== -->
+    <div id="staff-dashboard-section" style="display: none;">
+      
+      <!-- Staff Header Card -->
+      <div class="staff-header-card">
+        <div>
+          <span id="dash-hospital-type" class="badge badge-neutral" style="margin-bottom: 0.35rem;">Private Facility</span>
+          <h1 id="dash-hospital-name" class="staff-info-title">Hospital Name</h1>
+          <p id="dash-hospital-address" class="staff-info-sub">Hospital Location & Address</p>
+        </div>
+        <div class="staff-header-top-right">
+          <!-- Prominent Emergency Alert Indicator: Visible Immediately on Login Without Scrolling -->
+          <button id="staff-header-emergency-alert" class="staff-header-emergency-alert alert-quiet" type="button" aria-label="Emergency requests indicator" title="Click to jump to Incoming Emergency Requests">
+            <span class="alert-icon">🚨</span>
+            <span id="staff-header-emergency-text">No active emergencies</span>
+            <span class="alert-action-arrow">↓</span>
+          </button>
+
+          <div class="staff-logged-meta" style="text-align: right;">
+            <div style="font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase;">Logged In As</div>
+            <div id="dash-staff-name" style="font-size: 1.05rem; font-weight: 600; color: var(--color-text-primary);">Staff Member</div>
+            <div style="font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.2rem;">Last update: <span id="dash-last-updated">--</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time Warning Alerts Container -->
+      <div id="staff-warning-container">
+        <!-- Injected via staff.js if conditions are met -->
+      </div>
+
+      <!-- 6 Summary Metrics on Login Home -->
+      <div class="staff-kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem;">
+        <div class="card kpi-card" style="text-align: center;">
+          <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Total Beds</div>
+          <div id="stat-total-beds" style="font-size: 1.75rem; font-weight: 600; color: var(--color-text-primary); margin: 0.25rem 0;">--</div>
+          <div style="font-size: 0.72rem; color: var(--color-text-muted);">Registered Capacity</div>
+        </div>
+
+        <div class="card kpi-card" style="text-align: center;">
+          <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Occupied Beds</div>
+          <div id="stat-occupied-beds" style="font-size: 1.75rem; font-weight: 600; color: var(--color-text-primary); margin: 0.25rem 0;">--</div>
+          <div style="font-size: 0.72rem; color: var(--color-text-muted);">Currently Inpatient</div>
+        </div>
+
+        <div class="card kpi-card" style="text-align: center; background-color: var(--color-danger-bg); border-color: var(--color-danger-border);">
+          <div style="font-size: 0.75rem; color: var(--color-danger); font-weight: 600; text-transform: uppercase;" data-i18n="staff_blocked_beds_label">Blocked Beds (Emergency)</div>
+          <div id="stat-blocked-beds" style="font-size: 1.75rem; font-weight: 600; color: var(--color-danger); margin: 0.25rem 0;">0</div>
+          <div style="font-size: 0.72rem; color: var(--color-danger); font-weight: 600;">Active SOS Reservations</div>
+        </div>
+
+        <div class="card kpi-card" style="text-align: center; background-color: var(--color-primary-light); border-color: var(--color-primary);">
+          <div style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600; text-transform: uppercase;">Available Beds</div>
+          <div id="stat-available-beds" style="font-size: 1.75rem; font-weight: 600; color: var(--color-primary); margin: 0.25rem 0;">--</div>
+          <div style="font-size: 0.72rem; color: var(--color-primary); font-weight: 600;">Total − Occupied − Blocked</div>
+        </div>
+
+        <div class="card kpi-card" style="text-align: center;">
+          <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Today's Admissions</div>
+          <div id="stat-today-admissions" style="font-size: 1.75rem; font-weight: 600; color: var(--color-text-primary); margin: 0.25rem 0;">--</div>
+          <div style="font-size: 0.72rem; color: var(--color-text-muted);">New Patients In</div>
+        </div>
+
+        <div class="card kpi-card" style="text-align: center;">
+          <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase;">Today's Discharges</div>
+          <div id="stat-today-discharges" style="font-size: 1.75rem; font-weight: 600; color: var(--color-text-primary); margin: 0.25rem 0;">--</div>
+          <div style="font-size: 0.72rem; color: var(--color-text-muted);">Patients Discharged</div>
+        </div>
+      </div>
+
+      <!-- INCOMING EMERGENCY REQUESTS (Features 2 & 3) -->
+      <section id="sec-emergency-requests" class="staff-section" style="margin-bottom: 1.5rem; border-top: 4px solid var(--color-danger);" aria-labelledby="sec-emergency-title">
+        <div class="staff-section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.3rem;">🚨</span>
+            <div>
+              <h2 id="sec-emergency-title" style="font-size: 1.25rem; margin: 0;" data-i18n="staff_emergency_section">Incoming Emergency Requests</h2>
+              <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0;" data-i18n="staff_emergency_desc">Manage incoming simulated emergency arrivals and bed allocations in real-time.</p>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span id="badge-emergency-count" class="badge badge-emergency">0 Active</span>
+            <button id="btn-refresh-emergencies" class="btn btn-outline btn-sm" title="Refresh Emergency List">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <!-- Simulated Emergency Notice for Staff -->
+        <div class="simulated-emergency-notice" style="margin-bottom: 1rem;">
+          <span>ℹ️</span>
+          <span data-i18n="simulated_emergency_notice">
+            SIMULATED PROTOTYPE WORKFLOW: In an actual life-threatening medical emergency, call 108 (Ambulance) or 112 (National Emergency Helpline) immediately. This prototype simulates bed allocation, ambulance assignment, and hospital check-in for hackathon demonstration purposes only.
+          </span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="staff-emergency-table" aria-label="Incoming Emergency Requests Table">
+            <thead>
+              <tr>
+                <th>Tracking Code</th>
+                <th>Patient Locality</th>
+                <th>Ambulance & Driver</th>
+                <th>Status</th>
+                <th>Bed Reserved</th>
+                <th>Requested At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="emergency-requests-tbody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;" data-i18n="staff_no_emergencies">
+                  No active emergency requests for this hospital at this time.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Management Section Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+        
+        <!-- 1. Bed Management Form -->
+        <section class="staff-section" aria-labelledby="sec-bed-title">
+          <div class="staff-section-header">
+            <h2 id="sec-bed-title" style="font-size: 1.25rem;">🛏️ Bed Capacity & Occupancy</h2>
+            <span class="badge badge-neutral">Live Capacity</span>
+          </div>
+
+          <form id="form-beds">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-total-beds">Total Bed Capacity</label>
+                <input type="number" id="input-total-beds" class="form-control" min="1" required>
+              </div>
+              <div class="form-group">
+                <label for="input-occupied-beds">Occupied Beds</label>
+                <input type="number" id="input-occupied-beds" class="form-control" min="0" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-admissions">Today's Admissions</label>
+                <input type="number" id="input-admissions" class="form-control" min="0" value="0">
+              </div>
+              <div class="form-group">
+                <label for="input-discharges">Today's Discharges</label>
+                <input type="number" id="input-discharges" class="form-control" min="0" value="0">
+              </div>
+            </div>
+
+            <!-- Auto-Calculated Availability & Crowd Indicators -->
+            <div style="background-color: var(--bg-subtle); padding: 0.85rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; border: 1px solid var(--border-subtle);">
+              <div>
+                <span style="font-size: 0.78rem; color: var(--color-danger); font-weight: 700; text-transform: uppercase;">BLOCKED (EMERGENCY):</span>
+                <div id="calc-blocked-display" style="font-size: 1.3rem; font-weight: 800; color: var(--color-danger);">0</div>
+              </div>
+              <div>
+                <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">AVAILABLE BEDS:</span>
+                <div id="calc-available-display" style="font-size: 1.3rem; font-weight: 800; color: var(--status-green);">--</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">Total − Occupied − Blocked</div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">AUTO CROWD STATUS:</span>
+                <div id="calc-crowd-badge" style="margin-top: 0.2rem;"><span class="badge badge-green">🟢 Low</span></div>
+              </div>
+              <div id="bed-calc-warning" style="width: 100%; font-size: 0.85rem; color: var(--status-red); display: none; font-weight: 700; margin-top: 0.25rem;">
+                ⚠️ Occupied + Blocked cannot exceed total capacity
+              </div>
+            </div>
+
+            <button type="submit" id="btn-save-beds" class="btn btn-primary" style="width: 100%;">
+              💾 Save Bed Capacity Updates
+            </button>
+          </form>
+        </section>
+
+        <!-- 2. General Medical Resources Management (8 Key Facilities) -->
+        <section class="staff-section" aria-labelledby="sec-resources-title">
+          <div class="staff-section-header">
+            <h2 id="sec-resources-title" style="font-size: 1.25rem;">🏥 General Medical Resources</h2>
+            <span class="badge badge-neutral">8 Facilities</span>
+          </div>
+
+          <form id="form-resources">
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Set operational status for key hospital facilities and emergency equipment:
+            </p>
+
+            <div id="staff-resources-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+              <!-- Injected via staff.js with interactive 3-way toggle per facility -->
+            </div>
+
+            <button type="submit" id="btn-save-resources" class="btn btn-primary" style="width: 100%;">
+              💾 Save Medical Resource Statuses
+            </button>
+          </form>
+        </section>
+
+        <!-- 3. Doctor & Department Availability Management (Editable with Specialties) -->
+        <section class="staff-section" aria-labelledby="sec-doctors-title" style="grid-column: 1 / -1;">
+          <div class="staff-section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h2 id="sec-doctors-title" style="font-size: 1.25rem; margin-bottom: 0.2rem;">👨‍⚕️ Doctor & Department Availability</h2>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Manage on-duty doctors, medical specialties, clinic hours, and consultation limits.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button type="button" id="btn-add-doctor" class="btn btn-sm btn-outline" style="font-weight: 700;">
+                ➕ Add Doctor
+              </button>
+              <div id="dash-doctor-overall-badge">🟢 Available</div>
+            </div>
+          </div>
+
+          <form id="form-doctors">
+            <div id="staff-doctors-container" style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.25rem;">
+              <!-- Injected dynamically via staff.js with editable fields -->
+            </div>
+
+            <button type="submit" id="btn-save-doctors" class="btn btn-primary" style="width: 100%;">
+              💾 Save Doctor Availability
+            </button>
+          </form>
+        </section>
+
+      </div>
+
+      <!-- 4. Collapsible Activity & Audit Log -->
+      <details id="sec-audit-details" class="staff-section" style="margin-top: 1.5rem;">
+        <summary style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; list-style: none; padding: 0.25rem 0; user-select: none;">
+          <div>
+            <h2 id="sec-history-title" style="font-size: 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; margin: 0;">
+              📋 Recent Changes & Audit Log
+            </h2>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+              Recent availability updates and activity logged by staff (click to expand/collapse).
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <button type="button" id="btn-refresh-history" class="btn btn-outline btn-sm" style="font-size: 0.8rem;">
+              🔄 Refresh Log
+            </button>
+            <span id="audit-toggle-indicator" class="badge badge-neutral" style="font-size: 0.78rem;">Click to View ▾</span>
+          </div>
+        </summary>
+
+        <div class="table-wrap" style="margin-top: 1rem;">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Staff ID</th>
+                <th>Field Changed</th>
+                <th>Previous Value</th>
+                <th>New Value</th>
+              </tr>
+            </thead>
+            <tbody id="audit-history-tbody">
+              <!-- Injected via staff.js -->
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading audit records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p style="margin-bottom: 0.5rem;">
+        NexCare Hospital Administration Demo. Changes reflect immediately on the Public Patient Portal.
+      </p>
+      <p style="font-size: 0.78rem; color: #94a3b8;">
+        &copy; 2026 NexCare Project.
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="staff.js"></script>
+</body>
+</html>

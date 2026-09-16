@@ -49,8 +49,19 @@
                     alt="NexCare Logo"
                     class="brand-logo-image"
                 >
+
+                <div class="brand-name">
+                    <span data-i18n="brand_name">Nex</span>
+                    <span
+                        style="color: var(--secondary);"
+                        data-i18n="brand_suffix"
+                    >
+                        Care
+                    </span>
+                </div>
             </a>
 
+            <!-- Navigation Controls -->
             <div class="nav-controls">
 
                 <!-- Voice and Language Controls -->
@@ -102,6 +113,7 @@
                     </select>
                 </div>
 
+                <!-- Text Size Button -->
                 <button
                     id="toggle-text-size"
                     class="btn btn-outline btn-sm"
@@ -112,6 +124,7 @@
                     🔤 A+ Large Text
                 </button>
 
+                <!-- Staff Login -->
                 <a
                     href="staff.html"
                     class="btn btn-outline btn-sm"
@@ -121,6 +134,7 @@
                     Staff Login
                 </a>
 
+                <!-- Emergency SOS -->
                 <a
                     href="patient.html?sos=open"
                     id="nav-sos-btn"
@@ -129,7 +143,10 @@
                     title="Emergency SOS Numbers and Immediate Dispatch"
                 >
                     <span class="sos-icon">🚨</span>
-                    <span class="sos-text" data-i18n="sos_btn_label">
+                    <span
+                        class="sos-text"
+                        data-i18n="sos_btn_label"
+                    >
                         SOS Emergency
                     </span>
                 </a>
@@ -154,7 +171,10 @@
             <div class="locality-search-box" role="search">
 
                 <div class="locality-select-wrap">
-                    <label for="quick-locality" data-i18n="select_locality_label">
+                    <label
+                        for="quick-locality"
+                        data-i18n="select_locality_label"
+                    >
                         Select Your Locality in Chennai
                     </label>
 
@@ -280,6 +300,7 @@
                 "
             >
 
+                <!-- Beds -->
                 <div class="card" style="text-align: left;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">
                         🛏️
@@ -300,6 +321,7 @@
                     </p>
                 </div>
 
+                <!-- Distance -->
                 <div class="card" style="text-align: left;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">
                         📍
@@ -320,6 +342,7 @@
                     </p>
                 </div>
 
+                <!-- Doctors -->
                 <div class="card" style="text-align: left;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">
                         👨‍⚕️
@@ -340,6 +363,7 @@
                     </p>
                 </div>
 
+                <!-- Resources -->
                 <div class="card" style="text-align: left;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">
                         🏥
@@ -360,6 +384,7 @@
                     </p>
                 </div>
 
+                <!-- Crowd -->
                 <div class="card" style="text-align: left;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">
                         👥
@@ -500,12 +525,24 @@
                     >
                 </a>
 
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <a href="patient.html" data-i18n="nav_patient">
+                <div
+                    style="
+                        display: flex;
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                    "
+                >
+                    <a
+                        href="patient.html"
+                        data-i18n="nav_patient"
+                    >
                         Patient Search
                     </a>
 
-                    <a href="staff.html" data-i18n="nav_staff">
+                    <a
+                        href="staff.html"
+                        data-i18n="nav_staff"
+                    >
                         Staff Portal
                     </a>
 
@@ -528,7 +565,10 @@
 
             </div>
 
-            <p style="margin-bottom: 0.5rem;" data-i18n="footer_text">
+            <p
+                style="margin-bottom: 0.5rem;"
+                data-i18n="footer_text"
+            >
                 Demo Healthcare Application. Hospital names and locations are real publicly known Chennai facilities. Availability information is simulated demo data only.
             </p>
 

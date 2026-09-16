@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexCare — Smart Chennai Hospital Availability & Guidance</title>
+  <meta name="description" content="Find suitable nearby hospitals in Chennai by comparing bed availability, doctor availability, critical medical resources, and patient crowd levels.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Emergency Banner (Mandatory) -->
+  <div class="emergency-banner" role="alert">
+    <span data-i18n="emergency_banner">⚠️ If this is a medical emergency, dial 108 / 112 or visit the nearest emergency department immediately. NexCare does not provide emergency treatment or ambulance booking.</span>
+  </div>
+
+  <!-- Simulated Data Disclaimer (Mandatory) -->
+  <div class="demo-banner">
+    <span data-i18n="demo_banner">ℹ️ All hospital and availability information shown here is simulated demo data for prototype purposes.</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo" aria-label="NexCare Home">
+        <div class="brand-icon">✚</div>
+        <div class="brand-name"><span data-i18n="brand_name">Nex</span><span style="color: var(--secondary);" data-i18n="brand_suffix">Care</span></div>
+      </a>
+
+      <div class="nav-controls">
+        <!-- Grouped Voice Controls & Language Selector -->
+        <div class="nav-voice-lang-group" role="group" aria-label="Voice and Language Controls">
+          <button id="voice-assist-btn" class="btn btn-voice btn-sm" aria-pressed="false" data-i18n="voice_btn_label" title="Click to speak or listen">🎙️ Voice</button>
+          <button id="voice-stop-btn" class="btn btn-danger-subtle btn-sm" aria-label="Stop Voice Playback and Recognition" data-i18n="voice_stop_btn_label" title="Stop speech playback and voice listening">⏹️ Stop</button>
+          
+          <label for="lang-select" class="sr-only" style="display:none;" data-i18n="lang_select_label">Language</label>
+          <select id="lang-select" class="form-control nav-lang-select" aria-label="Select Language">
+            <option value="en">English</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+          </select>
+        </div>
+
+        <button id="toggle-text-size" class="btn btn-outline btn-sm" aria-pressed="false" data-i18n="text_large_btn" title="Toggle larger text for readability">🔤 A+ Large Text</button>
+        <a href="staff.html" class="btn btn-outline btn-sm" id="nav-staff-btn" data-i18n="nav_staff_login">Staff Login</a>
+        <a href="patient.html?sos=open" id="nav-sos-btn" class="btn btn-sos-nav" aria-label="Emergency SOS Assistance" title="Emergency SOS Numbers & Immediate Dispatch">
+          <span class="sos-icon">🚨</span>
+          <span class="sos-text" data-i18n="sos_btn_label">SOS Emergency</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="container">
+      <h1 class="hero-title" data-i18n="hero_title">Find the Right Hospital in Chennai</h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
+        Not just the closest hospital, but the one that truly has available beds, on-duty doctors, essential resources, and manageable crowds.
+      </p>
+
+      <!-- Locality Quick Selector & Live Location -->
+      <div class="locality-search-box" role="search">
+        <div class="locality-select-wrap">
+          <label for="quick-locality" data-i18n="select_locality_label">Select Your Locality in Chennai</label>
+          <select id="quick-locality" class="locality-select" aria-label="Select your Chennai locality">
+            <option value="" data-i18n="select_locality_placeholder">Choose your area (e.g. Adyar, Porur, Guindy)...</option>
+            <option value="Adyar">Adyar</option>
+            <option value="Anna Nagar">Anna Nagar</option>
+            <option value="Egmore">Egmore</option>
+            <option value="Guindy">Guindy</option>
+            <option value="Manapakkam">Manapakkam</option>
+            <option value="Mogappair">Mogappair</option>
+            <option value="Perambur">Perambur</option>
+            <option value="Porur">Porur</option>
+            <option value="Sholinganallur">Sholinganallur</option>
+            <option value="T. Nagar">T. Nagar</option>
+            <option value="Tambaram">Tambaram</option>
+            <option value="Velachery">Velachery</option>
+          </select>
+        </div>
+
+        <button id="btn-quick-live-loc" class="btn btn-outline btn-lg" style="flex: 1 1 200px;" data-i18n="btn_live_location">
+          📍 Use My Current Location
+        </button>
+
+        <button id="btn-quick-search" class="btn btn-primary btn-lg" style="flex: 1 1 180px;" data-i18n="btn_search">
+          🔍 Search Hospitals
+        </button>
+
+        <button id="btn-quick-recommend" class="btn btn-secondary btn-lg" style="flex: 1 1 210px;" data-i18n="btn_recommend">
+          ✨ Smart Recommendations
+        </button>
+      </div>
+
+      <!-- Quick Portal Switcher Cards -->
+      <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.75rem; flex-wrap: wrap;">
+        <a href="patient.html" class="btn btn-primary" data-i18n="btn_public_portal">
+          🏥 Public Patient Portal (No Login Required)
+        </a>
+        <a href="staff.html" class="btn btn-outline" data-i18n="btn_staff_portal">
+          🔒 Hospital Staff Portal (Update Availability)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Explanation Section: How NexCare Works -->
+  <main class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
+    <section style="text-align: center; margin-bottom: 3rem;">
+      <h2 style="font-size: 2rem; margin-bottom: 0.75rem;" data-i18n="why_nexcare_title">Why NexCare Makes a Difference</h2>
+      <p style="color: var(--text-muted); max-width: 720px; margin: 0 auto 2rem; font-size: 1.05rem;" data-i18n="why_nexcare_desc">
+        During urgent medical needs, going to the closest facility can lead to unexpected delays if it is completely filled or understaffed. NexCare evaluates five practical dimensions:
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem;">
+        <div class="card" style="text-align: left;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛏️</div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;" data-i18n="factor_beds_title">Beds (30%)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="factor_beds_desc">Real-time ratio of available beds versus occupied beds.</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📍</div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;" data-i18n="factor_distance_title">Distance (20%)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="factor_distance_desc">Calculated physical travel distance from your chosen locality.</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍⚕️</div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;" data-i18n="factor_doctors_title">Doctors (20%)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="factor_doctors_desc">Availability of on-duty physicians and specialists across departments.</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏥</div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;" data-i18n="factor_resources_title">Resources (15%)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="factor_resources_desc">Status of ICU beds, Oxygen, Lab, Pharmacy, CT scan, and Blood bank.</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;" data-i18n="factor_crowd_title">Crowd Level (15%)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="factor_crowd_desc">Current waiting queue and congestion to minimize wait times.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Emergency Services Section -->
+    <section class="card" style="background: linear-gradient(135deg, #fff 0%, #fef2f2 100%); border-color: #fecaca; padding: 2rem; margin-bottom: 2rem;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
+        <div>
+          <span class="badge badge-red" style="margin-bottom: 0.5rem;">Emergency Help Numbers</span>
+          <h2 style="font-size: 1.6rem; color: #991b1b; margin-bottom: 0.4rem;" data-i18n="emergency_numbers_title">Immediate Medical Emergencies</h2>
+          <p style="color: #7f1d1d; max-width: 600px; font-size: 0.95rem;" data-i18n="emergency_box_desc">
+            NexCare is an informational tool only. If a patient requires critical intervention, CPR, or immediate ambulance transport, contact emergency helplines directly:
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="tel:108" class="btn btn-lg btn-primary" style="background-color: #b91c1c; border-color: #991b1b;" data-i18n="call_108">
+            📞 Call 108 (Ambulance)
+          </a>
+          <a href="tel:112" class="btn btn-lg btn-outline" style="color: #991b1b; border-color: #b91c1c;" data-i18n="call_112">
+            📞 Call 112 (National Emergency)
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="brand-name" style="font-size: 1.2rem;">Nex<span>Care</span> Chennai</div>
+        <div style="display: flex; gap: 1rem;">
+          <a href="patient.html" data-i18n="nav_patient">Patient Search</a>
+          <a href="staff.html" data-i18n="nav_staff">Staff Portal</a>
+          <a href="/api/hospitals" target="_blank">REST API</a>
+          <a href="/health" target="_blank">Health</a>
+        </div>
+      </div>
+      <p style="margin-bottom: 0.5rem;" data-i18n="footer_text">
+        Demo Healthcare Application. Hospital names and locations are real publicly known Chennai facilities. Availability information is simulated demo data only.
+      </p>
+      <p style="font-size: 0.78rem; color: #94a3b8;" data-i18n="footer_copy">
+        &copy; 2026 NexCare Project. Built for healthcare accessibility and emergency preparedness.
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Wire Quick Buttons
+    const liveBtn = document.getElementById('btn-quick-live-loc');
+    if (liveBtn) {
+      liveBtn.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+          window.location.href = 'patient.html';
+          return;
+        }
+        liveBtn.textContent = '📍 Detecting...';
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            window.location.href = `patient.html?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;
+          },
+          (err) => {
+            alert('Location access was not granted. Opening patient portal to select your location manually.');
+            window.location.href = 'patient.html';
+          },
+          { timeout: 8000 }
+        );
+      });
+    }
+
+    document.getElementById('btn-quick-search').addEventListener('click', () => {
+      const area = document.getElementById('quick-locality').value;
+      const url = area ? `patient.html?locality=${encodeURIComponent(area)}&view=all` : `patient.html`;
+      window.location.href = url;
+    });
+
+    document.getElementById('btn-quick-recommend').addEventListener('click', () => {
+      const area = document.getElementById('quick-locality').value;
+      const url = area ? `patient.html?locality=${encodeURIComponent(area)}&view=recommended` : `patient.html?view=recommended`;
+      window.location.href = url;
+    });
+  </script>
+</body>
+</html>

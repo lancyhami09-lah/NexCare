@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexCare — Patient Hospital Finder (Chennai)</title>
+  <meta name="description" content="Search Chennai hospitals by bed availability, doctor availability, critical medical resources, and patient crowd levels.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Emergency Banner (Mandatory) -->
+  <div class="emergency-banner" role="alert">
+    <span data-i18n="emergency_banner">⚠️ If this is a medical emergency, dial 108 / 112 or visit the nearest emergency department immediately. NexCare does not provide emergency treatment or ambulance booking.</span>
+  </div>
+
+  <!-- Simulated Data Disclaimer (Mandatory) -->
+  <div class="demo-banner">
+    <span data-i18n="demo_banner">ℹ️ All hospital and availability information shown here is simulated demo data for prototype purposes.</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo" aria-label="NexCare Home">
+        <div class="brand-icon">✚</div>
+        <div class="brand-name"><span data-i18n="brand_name">Nex</span><span style="color: var(--secondary);" data-i18n="brand_suffix">Care</span></div>
+      </a>
+
+      <div class="nav-controls">
+        <!-- Grouped Voice Controls & Language Selector for One-Stop Accessibility -->
+        <div class="nav-voice-lang-group" role="group" aria-label="Voice and Language Controls">
+          <button id="voice-assist-btn" class="btn btn-voice btn-sm" aria-pressed="false" data-i18n="voice_btn_label" title="Click to speak or listen">🎙️ Voice</button>
+          <button id="voice-stop-btn" class="btn btn-danger-subtle btn-sm" aria-label="Stop Voice Playback and Recognition" data-i18n="voice_stop_btn_label" title="Stop speech playback and voice listening">⏹️ Stop</button>
+          
+          <label for="lang-select" class="sr-only" style="display:none;" data-i18n="lang_select_label">Language</label>
+          <select id="lang-select" class="form-control nav-lang-select" aria-label="Select Language">
+            <option value="en">English</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+          </select>
+        </div>
+
+        <button id="toggle-text-size" class="btn btn-outline btn-sm" aria-pressed="false" data-i18n="text_large_btn" title="Toggle larger text for readability">🔤 A+ Large Text</button>
+        <a href="staff.html" class="btn btn-outline btn-sm" data-i18n="nav_staff_login">Staff Portal</a>
+        <button id="btn-sos-floating" class="btn btn-sos-nav" aria-label="Emergency SOS Assistance" title="Emergency SOS Numbers & Immediate Dispatch">
+          <span class="sos-icon">🚨</span>
+          <span class="sos-text" data-i18n="sos_btn_label">SOS Emergency</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Active Emergency Banner (Shows when an SOS emergency request is in progress) -->
+  <div id="patient-active-emergency-banner" class="active-emergency-banner container" style="display: none; margin-top: 1rem;">
+    <div class="active-emergency-content">
+      <span style="font-size: 1.3rem;">🚨</span>
+      <span id="active-emergency-text" data-i18n="sos_active_banner">Active Emergency in Progress — Bed Reserved & Ambulance Assigned</span>
+      <span id="active-emergency-code" class="emergency-code-pill"></span>
+    </div>
+    <button id="btn-view-active-emergency" class="btn-emergency-view" data-i18n="sos_view_active">View Tracking</button>
+  </div>
+
+  <main class="container" style="padding-top: 1.5rem; padding-bottom: 3rem;">
+    <!-- Page Header & Locality Selector -->
+    <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(to right, #f8fafc, #ffffff); border-left: 5px solid var(--primary);">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+        <div>
+          <h1 style="font-size: 1.75rem; margin-bottom: 0.25rem;" data-i18n="patient_header_title">Find Hospitals in Chennai</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem;" data-i18n="patient_header_desc">Select your current locality to calculate real travel distances and accurate recommendations.</p>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
+          <!-- Live Geolocation Button -->
+          <button id="btn-live-loc" class="btn btn-outline" style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;" data-i18n="btn_live_location">
+            📍 Use My Current Location
+          </button>
+
+          <!-- Announce Nearby Hospitals Button -->
+          <button id="btn-announce-hospitals" class="btn btn-secondary" style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;" data-i18n="btn_announce_hospitals">
+            📢 Tell Me Nearby Hospitals
+          </button>
+        </div>
+      </div>
+
+      <!-- Two-Step Manual Location Cascading Dropdowns (State -> City) -->
+      <div class="location-cascade-wrap" style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-subtle); display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem;">
+        <div style="flex: 1 1 200px;">
+          <label for="patient-state" style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;" data-i18n="select_state_label">Select State / Union Territory</label>
+          <select id="patient-state" class="locality-select" style="width: 100%; padding: 0.5rem 0.75rem;" aria-label="Select State">
+            <option value="" data-i18n="select_state_placeholder">Choose State (e.g. Tamil Nadu, Kerala, Karnataka)...</option>
+          </select>
+        </div>
+
+        <div style="flex: 1 1 220px;">
+          <label for="patient-city" style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;" data-i18n="select_city_label">Select City / Locality</label>
+          <select id="patient-city" class="locality-select" style="width: 100%; padding: 0.5rem 0.75rem;" aria-label="Select City or Locality">
+            <option value="" data-i18n="select_city_placeholder">Choose City or Locality...</option>
+          </select>
+        </div>
+
+        <!-- Hidden legacy select for backward compatibility -->
+        <select id="patient-locality" style="display: none;" aria-hidden="true"></select>
+      </div>
+    </div>
+
+    <!-- Non-Chennai Notice Banner -->
+    <div id="non-chennai-notice-banner" class="card" style="display: none; margin-bottom: 1.5rem; background-color: #fffbeb; border: 1px solid #fcd34d; color: #92400e;">
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <div style="font-size: 1.5rem;">ℹ️</div>
+        <div style="font-size: 0.92rem; font-weight: 500;" id="non-chennai-notice-text" data-i18n="non_chennai_notice">
+          Full hospital data is currently available for Chennai. Showing distances from your location to Chennai-area hospitals.
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- Filter & View Bar -->
+    <div class="filter-bar">
+      <!-- Search Box -->
+      <div class="filter-group">
+        <input type="text" id="filter-search" class="filter-input" placeholder="Search hospital or area..." data-i18n-placeholder="search_input_placeholder" aria-label="Search hospitals">
+        
+        <select id="filter-type" class="filter-input" style="min-width: 150px;" aria-label="Filter by Hospital Type">
+          <option value="" data-i18n="filter_all_types">All Types (Govt & Private)</option>
+          <option value="Government" data-i18n="filter_govt">Government Hospitals Only</option>
+          <option value="Private" data-i18n="filter_private">Private Hospitals Only</option>
+        </select>
+
+        <select id="filter-crowd" class="filter-input" style="min-width: 140px;" aria-label="Filter by Crowd Level">
+          <option value="" data-i18n="filter_all_crowd">All Crowd Levels</option>
+          <option value="Low" data-i18n="filter_low_crowd">Low Crowd Only</option>
+          <option value="Moderate" data-i18n="filter_mod_crowd">Moderate Crowd</option>
+          <option value="High" data-i18n="filter_high_crowd">High Crowd</option>
+        </select>
+
+        <select id="filter-beds" class="filter-input" style="min-width: 150px;" aria-label="Filter by Bed Availability">
+          <option value="0" data-i18n="filter_any_beds">Any Bed Count</option>
+          <option value="50" data-i18n="filter_50_beds">50+ Beds Available</option>
+          <option value="100" data-i18n="filter_100_beds">100+ Beds Available</option>
+          <option value="200" data-i18n="filter_200_beds">200+ Beds Available</option>
+        </select>
+      </div>
+
+      <!-- View Switcher -->
+      <div class="view-tabs" role="tablist">
+        <button id="tab-all" class="view-tab active" role="tab" aria-selected="true" data-i18n="tab_all">All Hospitals</button>
+        <button id="tab-recommended" class="view-tab" role="tab" aria-selected="false" data-i18n="tab_recommended">✨ Top Recommendations</button>
+      </div>
+    </div>
+
+    <!-- Explanation Box for Recommendations Mode (Hidden in All Mode) -->
+    <div id="recommendation-info-banner" class="card" style="display: none; margin-bottom: 1.5rem; background-color: #f0fdf4; border-color: #bbf7d0;">
+      <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+        <div style="font-size: 1.5rem;">💡</div>
+        <div>
+          <h2 style="font-size: 1.15rem; color: #166534; margin-bottom: 0.25rem;" data-i18n="rec_banner_title">Transparent Scoring Logic</h2>
+          <p style="font-size: 0.88rem; color: #166534; line-height: 1.4;" data-i18n="rec_banner_desc">
+            Rankings balance five factors: Available Beds (30%), Proximity / Distance (20%), Doctors On-Duty (20%), General Resources (15%), and Crowd Queue (15%). This ensures you are directed to facilities that can practically accommodate care right now.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hospitals Container (Grid of Cards) -->
+    <div id="hospitals-list" class="hospitals-grid" aria-live="polite">
+      <!-- Injected via patient.js with translated labels and speak buttons -->
+      <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <p style="color: var(--text-muted); font-size: 1.1rem;">Loading Chennai hospitals and live demo indicators...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Hospital Details Modal -->
+  <div id="hospital-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-hospital-name">
+    <div class="modal-content">
+      <button id="modal-close-btn" class="modal-close" aria-label="Close dialog">&times;</button>
+      
+      <div style="margin-bottom: 1rem;">
+        <span id="modal-type-badge" class="badge badge-neutral">Government</span>
+        <h2 id="modal-hospital-name" style="font-size: 1.6rem; margin: 0.35rem 0;">Hospital Details</h2>
+        <p id="modal-hospital-address" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4;"></p>
+        <p id="modal-hospital-contact" style="font-size: 0.9rem; font-weight: 600; margin-top: 0.25rem; color: var(--primary);"></p>
+      </div>
+
+      <!-- Distance & Travel -->
+      <div style="background-color: var(--bg-subtle); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;" data-i18n="modal_dist_label">Estimated Travel Distance</span>
+          <div id="modal-distance" style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">-- km</div>
+        </div>
+        <a id="modal-map-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="background-color: #fff;" data-i18n="modal_map_btn">
+          🗺️ Open Directions in Google Maps
+        </a>
+      </div>
+
+      <!-- Bed Breakdown Section -->
+      <div style="margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;" data-i18n="modal_bed_title">Bed Capacity & Availability</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; text-align: center; margin-bottom: 0.5rem;">
+          <div class="card" style="padding: 0.65rem;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);" data-i18n="modal_bed_total">TOTAL BEDS</div>
+            <div id="modal-beds-total" style="font-size: 1.3rem; font-weight: 700;">--</div>
+          </div>
+          <div class="card" style="padding: 0.65rem;">
+            <div style="font-size: 0.75rem; color: var(--text-muted);" data-i18n="modal_bed_occupied">OCCUPIED</div>
+            <div id="modal-beds-occupied" style="font-size: 1.3rem; font-weight: 700; color: var(--text-muted);">--</div>
+          </div>
+          <div class="card" style="padding: 0.65rem; background-color: var(--status-green-bg); border-color: var(--status-green-border);">
+            <div style="font-size: 0.75rem; color: var(--status-green);" data-i18n="modal_bed_available">AVAILABLE</div>
+            <div id="modal-beds-available" style="font-size: 1.3rem; font-weight: 800; color: var(--status-green);">--</div>
+          </div>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="modal-bed-progress" class="progress-bar-fill" style="width: 50%;"></div>
+        </div>
+      </div>
+
+      <!-- Doctor & Department Availability -->
+      <div style="margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;" data-i18n="modal_doctors_title">Doctors & Specialized Departments</h3>
+        <div id="modal-doctors-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <!-- Injected via patient.js -->
+        </div>
+      </div>
+
+      <!-- General Medical Resources Grid -->
+      <div style="margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.35rem;" data-i18n="modal_resources_title">Medical Resources & Services</h3>
+        <div id="modal-resources-grid" class="resource-grid">
+          <!-- Injected via patient.js -->
+        </div>
+      </div>
+
+      <!-- Crowd & Waiting Status -->
+      <div style="margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;" data-i18n="modal_crowd_title">Patient Crowd & Waiting Times</h3>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background-color: var(--bg-subtle); border-radius: var(--radius-md);">
+          <div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);" data-i18n="modal_active_patients">Current Active Patients</div>
+            <div id="modal-crowd-current" style="font-size: 1.1rem; font-weight: 700;">--</div>
+          </div>
+          <div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);" data-i18n="modal_waiting_queue">Waiting in Queue</div>
+            <div id="modal-crowd-waiting" style="font-size: 1.1rem; font-weight: 700;">--</div>
+          </div>
+          <div id="modal-crowd-status-badge">
+            <span class="badge badge-green">🟢 Low</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Last Updated & Disclaimer -->
+      <div style="border-top: 1px solid var(--border-subtle); padding-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+        <p style="margin-bottom: 0.35rem;"><strong data-i18n="modal_last_updated">Last Reported Update:</strong> <span id="modal-last-updated">--</span></p>
+        <p style="font-style: italic;" data-i18n="modal_disclaimer">
+          ⚠️ <strong>Mandatory Disclaimer:</strong> Hospital name and address are real facilities. All bed numbers, doctor on-duty statuses, and crowd indicators shown are simulated demo figures. Please call the hospital directly to confirm emergency admissions.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOS Emergency Information & Simulated Workflow Modal -->
+  <div id="sos-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="sos-modal-title" style="display: none;">
+    <div class="modal-card sos-modal-card">
+      <div class="modal-header sos-modal-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.8rem;">🚨</span>
+          <div>
+            <h2 id="sos-modal-title" class="modal-title" style="color: var(--color-danger);" data-i18n="sos_modal_title">Emergency Medical Assistance</h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin: 0;" data-i18n="sos_modal_subtitle">Direct Emergency Contacts & Nearby Facilities</p>
+          </div>
+        </div>
+        <button id="btn-close-sos" class="btn-modal-close" aria-label="Close emergency modal">&times;</button>
+      </div>
+      
+      <div class="sos-modal-body" style="padding: 1.25rem;">
+        <!-- Mandatory Simulated Prototype Workflow Disclaimer -->
+        <div class="sos-alert-box" role="alert" style="margin-bottom: 1rem;">
+          <div style="font-size: 1.4rem;">⚠️</div>
+          <div>
+            <strong data-i18n="sos_disclaimer_title">Immediate Life-Threatening Emergency Notice</strong>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.82rem; line-height: 1.4;" data-i18n="simulated_emergency_notice">
+              SIMULATED PROTOTYPE WORKFLOW: In an actual life-threatening medical emergency, call 108 (Ambulance) or 112 (National Emergency Helpline) immediately. This prototype simulates bed allocation, ambulance assignment, and hospital check-in for hackathon demonstration purposes only.
+            </p>
+          </div>
+        </div>
+
+        <!-- VIEW A: Confirmation & Context Detection -->
+        <div id="sos-view-confirm">
+          <div style="background-color: var(--color-surface-subtle); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.1rem; margin-bottom: 1.25rem;">
+            <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--color-text-primary); margin-bottom: 0.4rem;" data-i18n="sos_confirm_title">Initiate Emergency Assistance?</h3>
+            <p style="font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.45; margin-bottom: 0.85rem;" data-i18n="sos_confirm_desc">
+              This will allocate the nearest available hospital with bed capacity and dispatch a simulated ambulance to your location.
+            </p>
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--color-text-primary); font-weight: 600; margin-bottom: 1rem;">
+              <span>📍 Detected Location:</span>
+              <span id="sos-detected-loc-text" style="background: var(--color-surface); padding: 0.25rem 0.6rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">Tamil Nadu • Chennai - Adyar</span>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <button id="btn-sos-confirm" class="btn-sos-confirm-action" style="flex: 2; min-width: 200px;" data-i18n="sos_btn_confirm">
+                🚨 Confirm & Request Emergency Bed
+              </button>
+              <button id="btn-sos-cancel-modal" class="btn-sos-cancel-action" style="flex: 1;" data-i18n="sos_btn_cancel">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- National Emergency Hotlines (Tap to Call) -->
+          <div style="margin-top: 1rem;">
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.65rem;" data-i18n="sos_hotlines_title">National Emergency Helplines (Tap to Call)</h3>
+            <div class="sos-hotline-grid">
+              <a href="tel:108" class="sos-hotline-btn primary-hotline" id="sos-call-108">
+                <div class="hotline-icon">🚑</div>
+                <div class="hotline-details">
+                  <div class="hotline-num">108</div>
+                  <div class="hotline-label" data-i18n="sos_108_label">National Ambulance & Emergency</div>
+                </div>
+              </a>
+              <a href="tel:112" class="sos-hotline-btn secondary-hotline" id="sos-call-112">
+                <div class="hotline-icon">📞</div>
+                <div class="hotline-details">
+                  <div class="hotline-num">112</div>
+                  <div class="hotline-label" data-i18n="sos_112_label">Unified Emergency Helpline</div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Nearest Hospital Emergency Lines (Dynamic Tap-to-Call) -->
+          <div style="margin-top: 1.25rem;">
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.6rem;" data-i18n="sos_nearest_hospitals_title">Nearest Hospital Emergency Contacts</h3>
+            <div id="sos-nearest-list" class="sos-nearest-list">
+              <!-- Populated via patient.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW B: Finding / Allocating State -->
+        <div id="sos-view-finding" style="display: none; text-align: center; padding: 2.5rem 1rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem; animation: spin 1.5s linear infinite;">🔄</div>
+          <h3 style="font-size: 1.2rem; color: var(--color-text-primary); margin-bottom: 0.5rem;" data-i18n="sos_finding_title">Locating Nearest Available Hospital...</h3>
+          <p style="font-size: 0.88rem; color: var(--color-text-muted);">Checking live bed capacity, securing bed block, and dispatching simulated ambulance...</p>
+        </div>
+
+        <!-- VIEW C: Live Tracking State -->
+        <div id="sos-view-tracking" style="display: none;">
+          <div style="background-color: var(--color-surface-subtle); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.1rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+              <h3 style="margin: 0; font-size: 1.05rem; color: var(--color-text-primary);" data-i18n="sos_confirmed_title">Simulated Emergency Dispatched</h3>
+              <span id="sos-track-status-pill" class="badge badge-emergency">Ambulance Assigned</span>
+            </div>
+
+            <!-- Key Info Grid -->
+            <div class="emergency-info-grid">
+              <div class="emergency-info-item">
+                <div class="info-label" data-i18n="sos_request_id_label">Tracking Code:</div>
+                <div id="sos-track-code" class="info-val" style="font-family: monospace; font-size: 0.95rem;">EMG-PENDING</div>
+              </div>
+              <div class="emergency-info-item">
+                <div class="info-label" data-i18n="sos_assigned_hospital">Assigned Hospital:</div>
+                <div id="sos-track-hospital" class="info-val" style="font-size: 0.95rem;">--</div>
+              </div>
+              <div class="emergency-info-item">
+                <div class="info-label">Bed Status:</div>
+                <div id="sos-track-bed"><span class="badge-bed-reserved" data-i18n="sos_bed_reserved">1 Bed Reserved Automatically</span></div>
+              </div>
+              <div class="emergency-info-item">
+                <div class="info-label" data-i18n="sos_assigned_ambulance">Simulated Ambulance:</div>
+                <div id="sos-track-ambulance" class="info-val" style="font-size: 0.95rem;">--</div>
+              </div>
+              <div class="emergency-info-item">
+                <div class="info-label" data-i18n="sos_driver_label">Driver:</div>
+                <div id="sos-track-driver" class="info-val" style="font-size: 0.88rem;">--</div>
+              </div>
+              <div class="emergency-info-item">
+                <div class="info-label" data-i18n="sos_eta_label">Estimated Arrival:</div>
+                <div id="sos-track-eta" class="info-val" style="font-size: 0.95rem; color: var(--color-primary);">~12 mins</div>
+              </div>
+            </div>
+
+            <!-- 4-Step Progression Timeline -->
+            <div class="emergency-timeline" id="emergency-timeline">
+              <div class="timeline-step" id="step-assigned">
+                <div class="timeline-step-icon">1</div>
+                <div class="timeline-step-label" data-i18n="sos_status_assigned">Assigned</div>
+              </div>
+              <div class="timeline-step" id="step-enroute">
+                <div class="timeline-step-icon">2</div>
+                <div class="timeline-step-label" data-i18n="sos_status_enroute">En Route</div>
+              </div>
+              <div class="timeline-step" id="step-arrived">
+                <div class="timeline-step-icon">3</div>
+                <div class="timeline-step-label" data-i18n="sos_status_arrived">Arrived</div>
+              </div>
+              <div class="timeline-step" id="step-admitted">
+                <div class="timeline-step-icon">4</div>
+                <div class="timeline-step-label" data-i18n="sos_status_admitted">Admitted</div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+              <button id="btn-emergency-cancel" class="btn-emergency-cancel-req" data-i18n="sos_cancel_btn">
+                Cancel Emergency Request
+              </button>
+              <a href="tel:108" class="btn btn-sm btn-danger" style="display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700;">
+                📞 Call 108 Hotline
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p style="margin-bottom: 0.5rem;" data-i18n="footer_text">
+        NexCare Public Portal — Demonstration System. Not a substitute for 108 Emergency Ambulance or official medical dispatch.
+      </p>
+      <p style="font-size: 0.78rem; color: #94a3b8;" data-i18n="footer_copy">
+        &copy; 2026 NexCare Project.
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="patient.js"></script>
+</body>
+</html>
